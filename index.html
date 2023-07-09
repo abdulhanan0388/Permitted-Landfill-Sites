@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/Regions_1.js"></script>
+        <script src="data/PermittedLandfillSites_2.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_Regions_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RGN22CD'] !== null ? autolinker.link(feature.properties['RGN22CD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RGN22NM'] !== null ? autolinker.link(feature.properties['RGN22NM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BNG_E'] !== null ? autolinker.link(feature.properties['BNG_E'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BNG_N'] !== null ? autolinker.link(feature.properties['BNG_N'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LONG'] !== null ? autolinker.link(feature.properties['LONG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LAT'] !== null ? autolinker.link(feature.properties['LAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape__Are'] !== null ? autolinker.link(feature.properties['Shape__Are'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape__Len'] !== null ? autolinker.link(feature.properties['Shape__Len'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GlobalID'] !== null ? autolinker.link(feature.properties['GlobalID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Regions_1_0() {
+            return {
+                pane: 'pane_Regions_1',
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,125,183,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Regions_1');
+        map.getPane('pane_Regions_1').style.zIndex = 401;
+        map.getPane('pane_Regions_1').style['mix-blend-mode'] = 'normal';
+        var layer_Regions_1 = new L.geoJson(json_Regions_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Regions_1',
+            layerName: 'layer_Regions_1',
+            pane: 'pane_Regions_1',
+            onEachFeature: pop_Regions_1,
+            style: style_Regions_1_0,
+        });
+        bounds_group.addLayer(layer_Regions_1);
+        map.addLayer(layer_Regions_1);
+        function pop_PermittedLandfillSites_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_nmbr</th>\
+                        <td>' + (feature.properties['lic_nmbr'] !== null ? autolinker.link(feature.properties['lic_nmbr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_ippcr</th>\
+                        <td>' + (feature.properties['lic_ippcr'] !== null ? autolinker.link(feature.properties['lic_ippcr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_wml</th>\
+                        <td>' + (feature.properties['lic_wml'] !== null ? autolinker.link(feature.properties['lic_wml'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cust_nmbr</th>\
+                        <td>' + (feature.properties['cust_nmbr'] !== null ? autolinker.link(feature.properties['cust_nmbr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">status</th>\
+                        <td>' + (feature.properties['status'] !== null ? autolinker.link(feature.properties['status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_ltype</th>\
+                        <td>' + (feature.properties['lic_ltype'] !== null ? autolinker.link(feature.properties['lic_ltype'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_name</th>\
+                        <td>' + (feature.properties['lic_name'] !== null ? autolinker.link(feature.properties['lic_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_site</th>\
+                        <td>' + (feature.properties['lic_site'] !== null ? autolinker.link(feature.properties['lic_site'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_name</th>\
+                        <td>' + (feature.properties['site_name'] !== null ? autolinker.link(feature.properties['site_name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_build</th>\
+                        <td>' + (feature.properties['site_build'] !== null ? autolinker.link(feature.properties['site_build'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_strt</th>\
+                        <td>' + (feature.properties['site_strt'] !== null ? autolinker.link(feature.properties['site_strt'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_area</th>\
+                        <td>' + (feature.properties['site_area'] !== null ? autolinker.link(feature.properties['site_area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_town</th>\
+                        <td>' + (feature.properties['site_town'] !== null ? autolinker.link(feature.properties['site_town'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_cnty</th>\
+                        <td>' + (feature.properties['site_cnty'] !== null ? autolinker.link(feature.properties['site_cnty'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">site_pcode</th>\
+                        <td>' + (feature.properties['site_pcode'] !== null ? autolinker.link(feature.properties['site_pcode'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">type_desc</th>\
+                        <td>' + (feature.properties['type_desc'] !== null ? autolinker.link(feature.properties['type_desc'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ngr'] !== null ? autolinker.link(feature.properties['ngr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ctroid_x</th>\
+                        <td>' + (feature.properties['ctroid_x'] !== null ? autolinker.link(feature.properties['ctroid_x'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ctroid_y</th>\
+                        <td>' + (feature.properties['ctroid_y'] !== null ? autolinker.link(feature.properties['ctroid_y'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">date_issue</th>\
+                        <td>' + (feature.properties['date_issue'] !== null ? autolinker.link(feature.properties['date_issue'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">lic_epr</th>\
+                        <td>' + (feature.properties['lic_epr'] !== null ? autolinker.link(feature.properties['lic_epr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">st_areasha</th>\
+                        <td>' + (feature.properties['st_areasha'] !== null ? autolinker.link(feature.properties['st_areasha'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">st_perimet</th>\
+                        <td>' + (feature.properties['st_perimet'] !== null ? autolinker.link(feature.properties['st_perimet'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">eaea_admin</th>\
+                        <td>' + (feature.properties['eaea_admin'] !== null ? autolinker.link(feature.properties['eaea_admin'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID_1'] !== null ? autolinker.link(feature.properties['OBJECTID_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Soil</th>\
+                        <td>' + (feature.properties['Soil'] !== null ? autolinker.link(feature.properties['Soil'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Soil_type</th>\
+                        <td>' + (feature.properties['Soil_type'] !== null ? autolinker.link(feature.properties['Soil_type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Elevation</th>\
+                        <td>' + (feature.properties['Elevation'] !== null ? autolinker.link(feature.properties['Elevation'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SulfurDiox</th>\
+                        <td>' + (feature.properties['SulfurDiox'] !== null ? autolinker.link(feature.properties['SulfurDiox'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PM2_5</th>\
+                        <td>' + (feature.properties['PM2_5'] !== null ? autolinker.link(feature.properties['PM2_5'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PM10</th>\
+                        <td>' + (feature.properties['PM10'] !== null ? autolinker.link(feature.properties['PM10'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NitrogenOx</th>\
+                        <td>' + (feature.properties['NitrogenOx'] !== null ? autolinker.link(feature.properties['NitrogenOx'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Lead</th>\
+                        <td>' + (feature.properties['Lead'] !== null ? autolinker.link(feature.properties['Lead'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CarbonMono</th>\
+                        <td>' + (feature.properties['CarbonMono'] !== null ? autolinker.link(feature.properties['CarbonMono'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CarbonDiox</th>\
+                        <td>' + (feature.properties['CarbonDiox'] !== null ? autolinker.link(feature.properties['CarbonDiox'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PermittedLandfillSites_2_0() {
+            return {
+                pane: 'pane_PermittedLandfillSites_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(77,219,49,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PermittedLandfillSites_2');
+        map.getPane('pane_PermittedLandfillSites_2').style.zIndex = 402;
+        map.getPane('pane_PermittedLandfillSites_2').style['mix-blend-mode'] = 'normal';
+        var layer_PermittedLandfillSites_2 = new L.geoJson(json_PermittedLandfillSites_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PermittedLandfillSites_2',
+            layerName: 'layer_PermittedLandfillSites_2',
+            pane: 'pane_PermittedLandfillSites_2',
+            onEachFeature: pop_PermittedLandfillSites_2,
+            style: style_PermittedLandfillSites_2_0,
+        });
+        bounds_group.addLayer(layer_PermittedLandfillSites_2);
+        map.addLayer(layer_PermittedLandfillSites_2);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/PermittedLandfillSites_2.png" /> Permitted Landfill Sites': layer_PermittedLandfillSites_2,'<img src="legend/Regions_1.png" /> Regions': layer_Regions_1,"Google Satellite": layer_GoogleSatellite_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_PermittedLandfillSites_2,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'lic_nmbr'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        </script>
+    </body>
+</html>
